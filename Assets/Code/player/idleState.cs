@@ -14,6 +14,7 @@ namespace player {
         public override void enterState(playerController obj)
         {
             _obj = obj;
+            _obj._anim.Play("idle");
         }
 
         public override void exitState()

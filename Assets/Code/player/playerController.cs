@@ -11,7 +11,7 @@ namespace player {
         Transform cameraObj;
         GameObject normalCamera;
         Transform playerTransform;
-        PlayerInput _playerInput;
+        Animator anim;
         [Header("state list")]
         FSM curState = null;
         idleState idle = new idleState();
@@ -23,6 +23,8 @@ namespace player {
         public Vector2 _moveInput { get { return moveInput; } }
         public Transform _camerObj { get { return cameraObj; } }
         public moveState _move { get { return move; } }
+        public idleState _idle { get { return idle; } }
+        public Animator _anim { get { return anim; } }
         #endregion
 
 
@@ -38,51 +40,56 @@ namespace player {
         [SerializeField] private float mouseY;
         [SerializeField] private float moveSpeed;
         [SerializeField] private float rotatSpeed;
+        [SerializeField] inputHandle input;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
             playerTransform = this.transform;
-            _playerInput = new PlayerInput();
             cameraObj = Camera.main.transform;
-            switchState(idle);
+            anim = GetComponent<Animator>();
         }
 
         private void OnEnable()
         {
-            _playerInput.Enable();
-/*            _playerInput.Gameplay.movement.performed +=
-                _playerInput => moveInput = _playerInput.ReadValue<Vector2>();
-            _playerInput.Gameplay.Camera.performed +=
-                i => cameraInput = i.ReadValue<Vector2>();*/
+            input.onMove += movement;
+
+            input.onStopMove += stopMove;
+        }
+
+        private void Start()
+        {
+            input.enableGameplayInput();
         }
 
         private void OnDisable()
         {
-            _playerInput.Disable();
+            input.onMove -= movement;
+            input.onStopMove -= stopMove;
         }
 
         private void FixedUpdate()
         {
-            curState.Action();
+            anim.SetFloat("speed", rb.velocity.magnitude);
+            playerRotate();
+            moveMethod();
         }
 
         private void Update()
         {
-            curState.exitState();
-            movement();
+
         }
 
-        public void movement()
+        void movement(Vector2 MoveInput)
         {
-            moveInput = _playerInput.Gameplay.movement.ReadValue<Vector2>();
-            cameraInput = _playerInput.Gameplay.Camera.ReadValue<Vector2>();
-            horiMove = moveInput.x;
-            vertiMove = moveInput.y;
-            mouseX = cameraInput.x;
-            mouseY = cameraInput.y;
-
+            horiMove = MoveInput.x;
+            vertiMove = MoveInput.y;
             moveAmount =  Mathf.Clamp01(Mathf.Abs(horiMove) + Mathf.Abs(vertiMove));
+        }
+
+        void stopMove() {
+            horiMove = 0;
+            vertiMove = 0;
         }
 
         public void switchState(FSM changeState) {
@@ -90,7 +97,7 @@ namespace player {
             curState.enterState(this);
         }
 
-        public void playerRotate() {
+        void playerRotate() {
             Vector3 targetDir = Vector3.zero;
             float moveOverride = moveAmount;
 
@@ -107,14 +114,11 @@ namespace player {
             playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, transRotate, rotatSpeed * Time.time);
         }
 
-        public void moveMethod() {
+        void moveMethod() {
             Vector3 movDir = cameraObj.forward * vertiMove + cameraObj.right * horiMove;
             movDir.Normalize();
-
             movDir *= moveSpeed;
             rb.velocity = Vector3.ProjectOnPlane(movDir, normalVector);
-
-
         }
 
 
