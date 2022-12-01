@@ -5,45 +5,38 @@ using UnityEngine;
 namespace anotherMethodForControl {
     public class newPlayerController : MonoBehaviour
     {
-        public keyProjection inputDevice;
-        inputSingleHandle input;
+        public GameObject player;
+        public float runSpeed;
+
+        Animator anim;
+        inputSingleHandle inputSingnal;
+        Rigidbody rb;
+        Vector3 movTarget;
+
+        private void Awake()
+        {
+            anim = player.GetComponent<Animator>();
+            inputSingnal = GetComponent<inputSingleHandle>();
+            rb = GetComponent<Rigidbody>();
+        }
         // Start is called before the first frame update
-        void Start()
+        private void Update()
         {
-            input = new inputSingleHandle(inputDevice);
+            anim.SetFloat("speed", inputSingnal.targetMagtitue);
+            anim.SetBool("falling", !inputSingnal.fall);
+            if (inputSingnal.targetMagtitue > 0.1f) {
+                player.transform.forward = Vector3.Slerp(player.transform.forward, inputSingnal.targetVector, 0.3f);
+            }
+            movTarget = inputSingnal.targetMagtitue * player.transform.forward * runSpeed;
+
         }
 
-        // Update is called once per frame
-        void Update()
+        private void FixedUpdate()
         {
-            input.handleSingle();
+            rb.position += new Vector3(movTarget.x, rb.velocity.y, movTarget.z);
 
-            Debug.Log("vertical : " + input.vertiValue);
-            Debug.Log("horizontal : " + input.horiValue);
-        }
-    }
 
-    public class inputSingleHandle{
-
-        private keyProjection inputDevice;
-        private float vertiSignle;
-        private float HoriSingle;
-        private float velocityVertical;
-        private float velocityHorizon;
-        public float vertiValue;
-        public float horiValue;
-
-        public inputSingleHandle(keyProjection _inputDevice) {
-            inputDevice = _inputDevice;
         }
 
-        public void handleSingle()
-        {
-            vertiSignle = (Input.GetKeyDown(inputDevice.UP) ? 1.0f : 0f) - (Input.GetKeyDown(inputDevice.DOWN) ? 1f : 0);
-            HoriSingle = (Input.GetKeyDown(inputDevice.LEFT) ? 1.0f : 0f) - (Input.GetKeyDown(inputDevice.RIGHT) ? 1f : 0);
-
-            vertiValue = Mathf.SmoothDamp(vertiValue, vertiSignle, ref velocityVertical, 0.1f);
-            horiValue = Mathf.SmoothDamp(horiValue, HoriSingle, ref velocityHorizon, 0.1f);
-        }
     }
 }

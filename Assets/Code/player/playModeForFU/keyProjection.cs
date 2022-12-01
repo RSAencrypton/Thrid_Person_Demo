@@ -7,4 +7,5 @@ public class keyProjection : ScriptableObject
     public string DOWN;
     public string LEFT;
     public string RIGHT;
+    public string JUMP;
 }

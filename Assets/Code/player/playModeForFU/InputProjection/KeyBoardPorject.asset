@@ -16,3 +16,4 @@ MonoBehaviour:
   DOWN: s
   LEFT: a
   RIGHT: d
+  JUMP: space
