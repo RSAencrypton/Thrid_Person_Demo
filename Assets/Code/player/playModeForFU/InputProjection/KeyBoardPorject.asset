@@ -17,3 +17,5 @@ MonoBehaviour:
   LEFT: a
   RIGHT: d
   JUMP: space
+  RUN: left shift
+  ROLL: 

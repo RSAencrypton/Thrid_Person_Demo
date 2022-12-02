@@ -12,6 +12,7 @@ namespace anotherMethodForControl {
         private float velocityVertical;
         private float velocityHorizon;
         public bool fall;
+        public bool isRoll;
         public float vertiValue = 0;
         public float horiValue = 0;
         public Vector3 targetVector;
@@ -22,7 +23,11 @@ namespace anotherMethodForControl {
 
         #endregion
 
-        #region Can Be Access Attribute
+        #region Trigger Signal
+        public bool jump;
+        public bool inputDisable = false;
+        public bool isRun;
+        private bool lastJump;
         #endregion
 
         private void Start()
@@ -37,12 +42,32 @@ namespace anotherMethodForControl {
             vertiValue = Mathf.SmoothDamp(vertiValue, vertiSignle, ref velocityVertical, 0.1f);
             horiValue = Mathf.SmoothDamp(horiValue, HoriSingle, ref velocityHorizon, 0.1f);
 
+
+            if (inputDisable == true) {
+                vertiValue = 0;
+                horiValue = 0;
+            }
+
             Vector2 tmpVec = SquareToCircle(new Vector2(horiValue, vertiValue));
 
             targetMagtitue = Mathf.Sqrt(Mathf.Pow(tmpVec.y, 2) + Mathf.Pow(tmpVec.x, 2));
             targetVector = tmpVec.x * transform.right + tmpVec.y * transform.forward;
 
-            fall = Physics.CheckSphere(detectPosition.position, detectRadius, checkLayer);
+            isRun = Input.GetKey(inputDevice.RUN);
+
+
+            bool tmpJump = Input.GetKey(inputDevice.JUMP);
+            jump = tmpJump;
+
+            if (tmpJump != lastJump && tmpJump == true)
+            {
+                jump = true;
+            }
+            else
+            {
+                jump = false;
+            }
+            lastJump = tmpJump;
 
         }
 
@@ -55,9 +80,11 @@ namespace anotherMethodForControl {
             return output;
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawWireSphere(detectPosition.position, detectRadius);
+
+
+        private void rollFinish() {
+            Debug.Log("get");
+            isRoll = false;
         }
     }
 }

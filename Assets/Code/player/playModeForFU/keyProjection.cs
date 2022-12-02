@@ -8,4 +8,6 @@ public class keyProjection : ScriptableObject
     public string LEFT;
     public string RIGHT;
     public string JUMP;
+    public string RUN;
+    public string ROLL;
 }
