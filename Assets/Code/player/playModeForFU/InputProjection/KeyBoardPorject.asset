@@ -18,4 +18,8 @@ MonoBehaviour:
   RIGHT: d
   JUMP: space
   RUN: left shift
-  ROLL: 
+  CAMERAUP: up
+  CAMERADOWN: down
+  CAMERALEFT: left
+  CAMERARIGHT: right
+  ATTACK: k

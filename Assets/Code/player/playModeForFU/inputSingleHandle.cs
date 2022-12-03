@@ -12,22 +12,22 @@ namespace anotherMethodForControl {
         private float velocityVertical;
         private float velocityHorizon;
         public bool fall;
-        public bool isRoll;
         public float vertiValue = 0;
         public float horiValue = 0;
+        public float camerVertical = 0;
+        public float cameraHorizontal = 0;
         public Vector3 targetVector;
         public float targetMagtitue;
-        public Transform detectPosition;
-        public float detectRadius;
-        public LayerMask checkLayer;
 
         #endregion
 
         #region Trigger Signal
-        public bool jump;
         public bool inputDisable = false;
         public bool isRun;
         private bool lastJump;
+        public bool jump;
+        private bool lastAttack;
+        public bool attack;
         #endregion
 
         private void Start()
@@ -36,11 +36,18 @@ namespace anotherMethodForControl {
 
         private void Update()
         {
+
+            #region camera control
+            camerVertical = (Input.GetKey(inputDevice.CAMERAUP) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERADOWN) ? 1f : 0);
+            cameraHorizontal = (Input.GetKey(inputDevice.CAMERARIGHT) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERALEFT) ? 1f : 0);
+            #endregion
+
+            #region move control
             vertiSignle = (Input.GetKey(inputDevice.UP) ? 1.0f : 0f) - (Input.GetKey(inputDevice.DOWN) ? 1f : 0);
             HoriSingle = (Input.GetKey(inputDevice.RIGHT) ? 1.0f : 0f) - (Input.GetKey(inputDevice.LEFT) ? 1f : 0);
-
             vertiValue = Mathf.SmoothDamp(vertiValue, vertiSignle, ref velocityVertical, 0.1f);
             horiValue = Mathf.SmoothDamp(horiValue, HoriSingle, ref velocityHorizon, 0.1f);
+            #endregion
 
 
             if (inputDisable == true) {
@@ -48,17 +55,18 @@ namespace anotherMethodForControl {
                 horiValue = 0;
             }
 
+            #region move projection
             Vector2 tmpVec = SquareToCircle(new Vector2(horiValue, vertiValue));
-
             targetMagtitue = Mathf.Sqrt(Mathf.Pow(tmpVec.y, 2) + Mathf.Pow(tmpVec.x, 2));
             targetVector = tmpVec.x * transform.right + tmpVec.y * transform.forward;
+            #endregion
 
             isRun = Input.GetKey(inputDevice.RUN);
 
 
+            #region jump control
             bool tmpJump = Input.GetKey(inputDevice.JUMP);
             jump = tmpJump;
-
             if (tmpJump != lastJump && tmpJump == true)
             {
                 jump = true;
@@ -68,6 +76,23 @@ namespace anotherMethodForControl {
                 jump = false;
             }
             lastJump = tmpJump;
+            #endregion
+
+            #region attack control
+            bool tmpAttack = Input.GetKey(inputDevice.ATTACK);
+            attack = tmpAttack;
+            if (tmpAttack != lastAttack && tmpAttack == true)
+            {
+                attack = true;
+            }
+            else
+            {
+                attack = false;
+            }
+            lastAttack = tmpAttack;
+            #endregion
+
+
 
         }
 
@@ -80,11 +105,5 @@ namespace anotherMethodForControl {
             return output;
         }
 
-
-
-        private void rollFinish() {
-            Debug.Log("get");
-            isRoll = false;
-        }
     }
 }

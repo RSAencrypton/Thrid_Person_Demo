@@ -9,5 +9,9 @@ public class keyProjection : ScriptableObject
     public string RIGHT;
     public string JUMP;
     public string RUN;
-    public string ROLL;
+    public string CAMERAUP;
+    public string CAMERADOWN;
+    public string CAMERALEFT;
+    public string CAMERARIGHT;
+    public string ATTACK;
 }

@@ -12,12 +12,17 @@ namespace anotherMethodForControl {
         public float jumpForce;
         public float rollForce;
         public float backJumpForce;
+        private bool canAttack;
+        private float targetLerp;
+        public PhysicMaterial frictionOne;
+        public PhysicMaterial frictionZero;
         #endregion
 
         #region characater component
         Animator anim;
         inputSingleHandle inputSingnal;
         Rigidbody rb;
+        CapsuleCollider capcol;
         Vector3 planarVec;
         Vector3 thrusVec;
         private bool lockPlanar = false;
@@ -28,13 +33,19 @@ namespace anotherMethodForControl {
             anim = player.GetComponent<Animator>();
             inputSingnal = GetComponent<inputSingleHandle>();
             rb = GetComponent<Rigidbody>();
+            capcol = GetComponent<CapsuleCollider>();
         }
         // Start is called before the first frame update
         private void Update()
         {
             anim.SetFloat("speed", inputSingnal.targetMagtitue * (inputSingnal.isRun ? runIncremental : 1f));
             if (inputSingnal.jump)
+            {
                 anim.SetTrigger("jump");
+            }
+
+            if (inputSingnal.attack && isInThisAnimation("BasicMove") && canAttack)
+                anim.SetTrigger("attack");
 
             if (rb.velocity.magnitude > 1.0f)
                 anim.SetTrigger("roll");
@@ -56,7 +67,9 @@ namespace anotherMethodForControl {
 
         }
 
-
+        public bool isInThisAnimation(string animName, string layerName = "Base Layer") {
+            return anim.GetCurrentAnimatorStateInfo(anim.GetLayerIndex(layerName)).IsName(animName);
+        }
 
 
 
@@ -65,8 +78,9 @@ namespace anotherMethodForControl {
         //Message Receive Implement
         //
         //
-
+        #region Message Event
         public void leaveTheGround() {
+            capcol.material = frictionZero;
             inputSingnal.inputDisable = true;
             lockPlanar = true;
         }
@@ -77,13 +91,16 @@ namespace anotherMethodForControl {
 
         public void onGround() {
             anim.SetBool("isGorund", true);
+            canAttack = true;
         }
 
         public void notOnGround() {
             anim.SetBool("isGorund", false);
+            canAttack = false;
         }
 
         public void onGroundEnter() {
+            capcol.material = frictionOne;
             inputSingnal.inputDisable = false;
             lockPlanar = false;
         }
@@ -93,7 +110,40 @@ namespace anotherMethodForControl {
         }
 
         public void onBackJumpEnter() {
-            rb.AddForce(Vector3.back * backJumpForce, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * 2f, ForceMode.Impulse);
         }
+
+        public void onBackJumpUpdate() {
+            rb.AddForce(Vector3.back * anim.GetFloat("jabVelocity"), ForceMode.Impulse);
+        }
+
+        public void onAttackIdleEnter() {
+            inputSingnal.inputDisable = false;
+            //lockPlanar = false;
+            targetLerp = 0;
+        }
+
+        public void onAttackIdleUpdate() {
+            int curIndex = anim.GetLayerIndex("attack layer");
+            float curWeight = anim.GetLayerWeight(curIndex);
+            curWeight = Mathf.Lerp(curWeight, targetLerp, 0.1f);
+            anim.SetLayerWeight(curIndex, curWeight);
+        }
+
+        public void onAttackEnter() {
+            inputSingnal.inputDisable = true;
+            //lockPlanar = true;
+            targetLerp = 1f;
+        }
+
+        public void onAttackUpdate() {
+            rb.AddForce(player.transform.forward * anim.GetFloat("attackVelocity"), ForceMode.Impulse);
+            int curIndex = anim.GetLayerIndex("attack layer");
+            float curWeight = anim.GetLayerWeight(curIndex);
+            curWeight = Mathf.Lerp(curWeight, targetLerp, 0.1f);
+            anim.SetLayerWeight(curIndex, curWeight);
+        }
+
+        #endregion
     }
 }
