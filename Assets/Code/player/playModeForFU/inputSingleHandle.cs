@@ -3,40 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace anotherMethodForControl {
-    public class inputSingleHandle : MonoBehaviour
+    public class inputSingleHandle : IUserInput
     {
-        #region Attribute Area
         public keyProjection inputDevice;
-        private float vertiSignle;
-        private float HoriSingle;
-        private float velocityVertical;
-        private float velocityHorizon;
-        public bool fall;
-        public float vertiValue = 0;
-        public float horiValue = 0;
-        public float camerVertical = 0;
-        public float cameraHorizontal = 0;
-        public Vector3 targetVector;
-        public float targetMagtitue;
-
-        #endregion
-
-        #region Trigger Signal
-        public bool inputDisable = false;
-        public bool isRun;
-        private bool lastJump;
-        public bool jump;
-        private bool lastAttack;
-        public bool attack;
-        #endregion
+        public float mouseSenstivityX;
+        public float mouseSenstivityY;
 
 
         private void Update()
         {
 
             #region camera control
-            camerVertical = (Input.GetKey(inputDevice.CAMERAUP) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERADOWN) ? 1f : 0);
-            cameraHorizontal = (Input.GetKey(inputDevice.CAMERARIGHT) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERALEFT) ? 1f : 0);
+            //camerVertical = (Input.GetKey(inputDevice.CAMERAUP) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERADOWN) ? 1f : 0);
+            //cameraHorizontal = (Input.GetKey(inputDevice.CAMERARIGHT) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERALEFT) ? 1f : 0);
+
+            camerVertical = -Input.GetAxis("Mouse Y") * mouseSenstivityY;
+            cameraHorizontal = Input.GetAxis("Mouse X") * mouseSenstivityX;
             #endregion
 
             #region move control
@@ -89,17 +71,8 @@ namespace anotherMethodForControl {
             lastAttack = tmpAttack;
             #endregion
 
+            defence = Input.GetKey(inputDevice.defence);
 
-
-        }
-
-        public Vector2 SquareToCircle(Vector2 _input) {
-            Vector2 output = Vector2.zero;
-
-            output.x = _input.x * Mathf.Sqrt(1 - Mathf.Pow(_input.y, 2) / 2f);
-            output.y = _input.y * Mathf.Sqrt(1 - Mathf.Pow(_input.x, 2) / 2f);
-
-            return output;
         }
 
     }

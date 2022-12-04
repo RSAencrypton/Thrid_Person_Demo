@@ -23,3 +23,4 @@ MonoBehaviour:
   CAMERALEFT: left
   CAMERARIGHT: right
   ATTACK: k
+  defence: l

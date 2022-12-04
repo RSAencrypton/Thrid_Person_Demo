@@ -5,7 +5,7 @@ using UnityEngine;
 namespace anotherMethodForControl {
     public class cameraController : MonoBehaviour
     {
-        private gamepadSignal camerasignal;
+        private IUserInput camerasignal;
         public float cameraHorzonSpeed = 20f;
         public float cameraVertiSpeed = 80f;
         public Transform player;
@@ -22,6 +22,8 @@ namespace anotherMethodForControl {
             playerHandle = cameraHandle.transform.parent.gameObject;
             camera = Camera.main.gameObject;
             camerasignal = playerHandle.GetComponent<newPlayerController>().inputSingnal;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = false;
         }
 
         private void Update()

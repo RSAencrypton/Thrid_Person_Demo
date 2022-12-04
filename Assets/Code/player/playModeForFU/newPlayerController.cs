@@ -21,7 +21,7 @@ namespace anotherMethodForControl {
 
         #region characater component
         Animator anim;
-        public gamepadSignal inputSingnal;
+        public IUserInput inputSingnal;
         Rigidbody rb;
         CapsuleCollider capcol;
         Vector3 planarVec;
@@ -32,14 +32,25 @@ namespace anotherMethodForControl {
         private void Awake()
         {
             anim = player.GetComponent<Animator>();
-            inputSingnal = GetComponent<gamepadSignal>();
             rb = GetComponent<Rigidbody>();
             capcol = GetComponent<CapsuleCollider>();
+
+            IUserInput[] inputList = GetComponents<IUserInput>();
+            foreach (var item in inputList)
+            {
+                if (item.enabled == true)
+                {
+                    inputSingnal = item;
+                    break;
+                }
+            }
         }
+
         // Start is called before the first frame update
         private void Update()
         {
             anim.SetFloat("speed", inputSingnal.targetMagtitue * (inputSingnal.isRun ? runIncremental : 1f));
+            anim.SetBool("defence", inputSingnal.defence);
             if (inputSingnal.jump)
             {
                 anim.SetTrigger("jump");

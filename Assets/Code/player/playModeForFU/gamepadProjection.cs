@@ -11,4 +11,5 @@ public class gamepadProjection : ScriptableObject
     public string attack;
     public string run;
     public string jump;
+    public string defence;
 }

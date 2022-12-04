@@ -14,4 +14,5 @@ public class keyProjection : ScriptableObject
     public string CAMERALEFT;
     public string CAMERARIGHT;
     public string ATTACK;
+    public string defence;
 }
