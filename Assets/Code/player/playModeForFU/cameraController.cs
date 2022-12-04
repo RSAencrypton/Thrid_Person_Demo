@@ -5,7 +5,7 @@ using UnityEngine;
 namespace anotherMethodForControl {
     public class cameraController : MonoBehaviour
     {
-        public inputSingleHandle camerasignal;
+        private gamepadSignal camerasignal;
         public float cameraHorzonSpeed = 20f;
         public float cameraVertiSpeed = 80f;
         public Transform player;
@@ -21,12 +21,17 @@ namespace anotherMethodForControl {
             cameraHandle = transform.parent.gameObject;
             playerHandle = cameraHandle.transform.parent.gameObject;
             camera = Camera.main.gameObject;
+            camerasignal = playerHandle.GetComponent<newPlayerController>().inputSingnal;
         }
 
         private void Update()
         {
 
+
             Vector3 playerEularAngle = player.eulerAngles;
+
+
+
             playerHandle.transform.Rotate(Vector3.up,camerasignal.cameraHorizontal * cameraHorzonSpeed * Time.deltaTime);
             tmpEular -= -camerasignal.camerVertical * cameraVertiSpeed * Time.deltaTime;
             tmpEular = Mathf.Clamp(tmpEular, -40, 30);

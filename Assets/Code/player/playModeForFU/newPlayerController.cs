@@ -16,11 +16,12 @@ namespace anotherMethodForControl {
         private float targetLerp;
         public PhysicMaterial frictionOne;
         public PhysicMaterial frictionZero;
+        private Vector3 deltaPos;
         #endregion
 
         #region characater component
         Animator anim;
-        inputSingleHandle inputSingnal;
+        public gamepadSignal inputSingnal;
         Rigidbody rb;
         CapsuleCollider capcol;
         Vector3 planarVec;
@@ -31,7 +32,7 @@ namespace anotherMethodForControl {
         private void Awake()
         {
             anim = player.GetComponent<Animator>();
-            inputSingnal = GetComponent<inputSingleHandle>();
+            inputSingnal = GetComponent<gamepadSignal>();
             rb = GetComponent<Rigidbody>();
             capcol = GetComponent<CapsuleCollider>();
         }
@@ -62,8 +63,9 @@ namespace anotherMethodForControl {
 
         private void FixedUpdate()
         {
+            rb.position += deltaPos;
             rb.velocity = new Vector3(planarVec.x, rb.velocity.y, planarVec.z);
-
+            deltaPos = Vector3.zero;
 
         }
 
@@ -142,6 +144,11 @@ namespace anotherMethodForControl {
             float curWeight = anim.GetLayerWeight(curIndex);
             curWeight = Mathf.Lerp(curWeight, targetLerp, 0.1f);
             anim.SetLayerWeight(curIndex, curWeight);
+        }
+
+        public void onRootMotionUpdate(object _deltaPos) {
+            if (isInThisAnimation("final_light_slash", "attack layer"))
+                deltaPos += (Vector3)_deltaPos;
         }
 
         #endregion

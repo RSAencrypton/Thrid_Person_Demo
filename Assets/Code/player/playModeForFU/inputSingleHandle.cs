@@ -30,9 +30,6 @@ namespace anotherMethodForControl {
         public bool attack;
         #endregion
 
-        private void Start()
-        {
-        }
 
         private void Update()
         {
