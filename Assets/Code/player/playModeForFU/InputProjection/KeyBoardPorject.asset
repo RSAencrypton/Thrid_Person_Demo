@@ -16,11 +16,13 @@ MonoBehaviour:
   DOWN: s
   LEFT: a
   RIGHT: d
-  JUMP: space
+  JUMP: 
   RUN: left shift
   CAMERAUP: up
   CAMERADOWN: down
   CAMERALEFT: left
   CAMERARIGHT: right
-  ATTACK: k
-  defence: l
+  ATTACK: mouse 0
+  defence: mouse 1
+  LOCKON: q
+  ROLL: space

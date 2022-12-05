@@ -8,10 +8,22 @@ namespace anotherMethodForControl {
         public keyProjection inputDevice;
         public float mouseSenstivityX;
         public float mouseSenstivityY;
+        public buttonFunction btFuncAttack = new buttonFunction();
+        public buttonFunction btFuncRoll = new buttonFunction();
+        public buttonFunction btFuncRun = new buttonFunction();
+        public buttonFunction btFuncDefence = new buttonFunction();
+        public buttonFunction btFuncLockOn = new buttonFunction();
 
 
         private void Update()
         {
+            #region listen function
+            btFuncAttack.onUpdate(Input.GetKey(inputDevice.ATTACK));
+            btFuncRoll.onUpdate(Input.GetKey(inputDevice.ROLL));
+            btFuncRun.onUpdate(Input.GetKey(inputDevice.RUN));
+            btFuncDefence.onUpdate(Input.GetKey(inputDevice.defence));
+            btFuncLockOn.onUpdate(Input.GetKey(inputDevice.LOCKON));
+            #endregion
 
             #region camera control
             //camerVertical = (Input.GetKey(inputDevice.CAMERAUP) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERADOWN) ? 1f : 0);
@@ -40,38 +52,15 @@ namespace anotherMethodForControl {
             targetVector = tmpVec.x * transform.right + tmpVec.y * transform.forward;
             #endregion
 
-            isRun = Input.GetKey(inputDevice.RUN);
-
-
-            #region jump control
-            bool tmpJump = Input.GetKey(inputDevice.JUMP);
-            jump = tmpJump;
-            if (tmpJump != lastJump && tmpJump == true)
-            {
-                jump = true;
-            }
-            else
-            {
-                jump = false;
-            }
-            lastJump = tmpJump;
+            #region signal control
+            isRun = (btFuncRun.isPress && !btFuncRun.isDelay) || btFuncRun.isExtend;
+            isRoll = btFuncRoll.isPress;
+            defence = btFuncDefence.isPress;
+            jump = btFuncRun.onPress && btFuncRun.isExtend;
+            attack = btFuncAttack.onPress;
+            isLockOn = btFuncLockOn.onPress;
             #endregion
 
-            #region attack control
-            bool tmpAttack = Input.GetKey(inputDevice.ATTACK);
-            attack = tmpAttack;
-            if (tmpAttack != lastAttack && tmpAttack == true)
-            {
-                attack = true;
-            }
-            else
-            {
-                attack = false;
-            }
-            lastAttack = tmpAttack;
-            #endregion
-
-            defence = Input.GetKey(inputDevice.defence);
 
         }
 

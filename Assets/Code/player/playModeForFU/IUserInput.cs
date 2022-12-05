@@ -11,6 +11,8 @@ public abstract class IUserInput : MonoBehaviour
     protected float velocityHorizon;
     public bool fall;
     public bool defence;
+    public bool isRoll;
+    public bool isLockOn;
     public float vertiValue = 0;
     public float horiValue = 0;
     public float camerVertical = 0;
