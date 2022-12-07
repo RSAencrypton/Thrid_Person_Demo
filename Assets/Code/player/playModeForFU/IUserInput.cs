@@ -27,8 +27,8 @@ public abstract class IUserInput : MonoBehaviour
     public bool isRun;
     protected bool lastJump;
     public bool jump;
-    protected bool lastAttack;
-    public bool attack;
+    public bool isLeftClick;
+    public bool isRightClick;
     #endregion
 
     protected Vector2 SquareToCircle(Vector2 _input)

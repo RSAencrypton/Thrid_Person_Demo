@@ -15,14 +15,13 @@ namespace anotherMethodForControl {
         public float backJumpForce;
         private bool canAttack;
         private bool trackDir = false;
-        private float targetLerp;
         private float defenceLerp;
         public PhysicMaterial frictionOne;
         public PhysicMaterial frictionZero;
         private Vector3 deltaPos;
         #endregion
 
-        #region characater component
+        #region character component
         Animator anim;
         public IUserInput inputSingnal;
         Rigidbody rb;
@@ -30,11 +29,13 @@ namespace anotherMethodForControl {
         Vector3 planarVec;
         Vector3 thrusVec;
         private bool lockPlanar = false;
+        public bool leftHandShield = true;
         #endregion
 
         private void Awake()
         {
             anim = player.GetComponent<Animator>();
+
             rb = GetComponent<Rigidbody>();
             capcol = GetComponent<CapsuleCollider>();
 
@@ -67,15 +68,23 @@ namespace anotherMethodForControl {
                 anim.SetFloat("right", inputSingnal.targetVector.x * (inputSingnal.isRun ? runIncremental : 1f));
             }
 
-            anim.SetBool("defence", inputSingnal.defence);
+            //anim.SetBool("defence", inputSingnal.defence);
             if (inputSingnal.jump)
             {
                 anim.SetTrigger("jump");
                 canAttack = false;
             }
 
-            if (inputSingnal.attack && isInThisAnimation("BasicMove") && canAttack)
+            if ((inputSingnal.isLeftClick || inputSingnal.isRightClick) &&
+                (isInThisAnimation("BasicMove") || isInThisTage("attack")) && canAttack) {
+
+                if (inputSingnal.isLeftClick) {
+                    anim.SetBool("isMirror", true);
+                } else if (inputSingnal.isRightClick) {
+                    anim.SetBool("isMirror", false);
+                }
                 anim.SetTrigger("attack");
+            }
 
             if (inputSingnal.isRoll || rb.velocity.magnitude >= 7f) {
                 anim.SetTrigger("roll");
@@ -122,7 +131,10 @@ namespace anotherMethodForControl {
         }
 
 
-
+        public bool isInThisTage(string animTage, string layerName = "Base Layer")
+        {
+            return anim.GetCurrentAnimatorStateInfo(anim.GetLayerIndex(layerName)).IsTag(animTage);
+        }
 
 
         //Message Receive Implement
@@ -170,35 +182,20 @@ namespace anotherMethodForControl {
             rb.AddForce(Vector3.back * anim.GetFloat("jabVelocity"), ForceMode.Impulse);
         }
 
-        public void onOtherMotionIdleEnter() {
-            inputSingnal.inputDisable = false;
-            //lockPlanar = false;
-            targetLerp = 0;
-        }
 
-        public void onOtherMotionIdleUpdate() {
-            int curIndex = anim.GetLayerIndex("attack layer");
-            float curWeight = anim.GetLayerWeight(curIndex);
-            curWeight = Mathf.Lerp(curWeight, targetLerp, 0.1f);
-            anim.SetLayerWeight(curIndex, curWeight);
-        }
 
         public void onOtherMotionEnter() {
             inputSingnal.inputDisable = true;
-            //lockPlanar = true;
-            targetLerp = 1f;
+            lockPlanar = false;
         }
 
         public void onOtherMotionUpdate() {
             rb.AddForce(player.transform.forward * anim.GetFloat("attackVelocity"), ForceMode.Impulse);
-            int curIndex = anim.GetLayerIndex("attack layer");
-            float curWeight = anim.GetLayerWeight(curIndex);
-            curWeight = Mathf.Lerp(curWeight, targetLerp, 0.1f);
-            anim.SetLayerWeight(curIndex, curWeight);
+
         }
 
         public void onRootMotionUpdate(object _deltaPos) {
-            if (isInThisAnimation("final_light_slash", "attack layer"))
+            if (isInThisAnimation("final_light_slash"))
                 deltaPos += (Vector3)_deltaPos;
         }
 

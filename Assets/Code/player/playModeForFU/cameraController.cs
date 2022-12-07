@@ -15,6 +15,7 @@ namespace anotherMethodForControl {
         private float tmpEular = 20f;
         private GameObject camera;
         public lockTarget _lockTarget;
+        public bool isAI;
         GameObject playerHandle;
         GameObject cameraHandle;
 
@@ -27,9 +28,13 @@ namespace anotherMethodForControl {
             playerHandle = cameraHandle.transform.parent.gameObject;
             camera = Camera.main.gameObject;
             camerasignal = playerHandle.GetComponent<newPlayerController>().inputSingnal;
-            lockOnUI.enabled = false;
-            isLock = false;
-            Cursor.lockState = CursorLockMode.None;
+            if (!isAI)
+            {
+                lockOnUI.enabled = false;
+                isLock = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+
             Cursor.visible = false;
         }
 
@@ -51,9 +56,11 @@ namespace anotherMethodForControl {
                 nextForward.y = 0;
                 playerHandle.transform.forward = nextForward;
 
-                lockOnUI.rectTransform.position = Camera.main.WorldToScreenPoint(_lockTarget.obj.transform.position +
-                    new Vector3(0, _lockTarget.halfHeight, 0));
-                cameraHandle.transform.LookAt(_lockTarget.obj.transform);
+                if (!isAI) {
+                    lockOnUI.rectTransform.position = Camera.main.WorldToScreenPoint(_lockTarget.obj.transform.position +
+    new Vector3(0, _lockTarget.halfHeight, 0));
+                    cameraHandle.transform.LookAt(_lockTarget.obj.transform);
+                }
 
                 if (Vector3.Distance(_lockTarget.obj.transform.position, player.transform.position) >= 10.5f) {
                     _lockTarget.unlock();
@@ -66,8 +73,10 @@ namespace anotherMethodForControl {
 
         private void LateUpdate()
         {
-            camera.transform.position = transform.position;
-            camera.transform.eulerAngles = transform.eulerAngles;
+            if (!isAI) {
+                camera.transform.position = transform.position;
+                camera.transform.eulerAngles = transform.eulerAngles;
+            }
         }
 
         public void unlockOn() {

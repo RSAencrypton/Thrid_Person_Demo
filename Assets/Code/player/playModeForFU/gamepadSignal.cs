@@ -50,16 +50,16 @@ public class gamepadSignal : IUserInput
 
         #region attack control
         bool tmpAttack = Input.GetButton(inputDevice.attack);
-        attack = tmpAttack;
-        if (tmpAttack != lastAttack && tmpAttack == true)
-        {
-            attack = true;
-        }
-        else
-        {
-            attack = false;
-        }
-        lastAttack = tmpAttack;
+        //attack = tmpAttack;
+        //if (tmpAttack != lastAttack && tmpAttack == true)
+        //{
+        //    attack = true;
+        //}
+        //else
+        //{
+        //    attack = false;
+        //}
+        //lastAttack = tmpAttack;
         #endregion
     }
 

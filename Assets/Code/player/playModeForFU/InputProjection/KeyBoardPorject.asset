@@ -22,7 +22,8 @@ MonoBehaviour:
   CAMERADOWN: down
   CAMERALEFT: left
   CAMERARIGHT: right
-  ATTACK: mouse 0
-  defence: mouse 1
+  LEFTCLICK: mouse 0
+  RIGHTCLICK: mouse 1
+  DEFENCE: 
   LOCKON: q
   ROLL: space

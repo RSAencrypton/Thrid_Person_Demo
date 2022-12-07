@@ -8,26 +8,25 @@ namespace anotherMethodForControl {
         public keyProjection inputDevice;
         public float mouseSenstivityX;
         public float mouseSenstivityY;
-        public buttonFunction btFuncAttack = new buttonFunction();
+        public buttonFunction btFuncLeftClick = new buttonFunction();
         public buttonFunction btFuncRoll = new buttonFunction();
         public buttonFunction btFuncRun = new buttonFunction();
-        public buttonFunction btFuncDefence = new buttonFunction();
+        public buttonFunction btFuncRightClick = new buttonFunction();
         public buttonFunction btFuncLockOn = new buttonFunction();
 
 
         private void Update()
         {
             #region listen function
-            btFuncAttack.onUpdate(Input.GetKey(inputDevice.ATTACK));
+            //btFuncAttack.onUpdate(Input.GetKey(inputDevice.ATTACK));
             btFuncRoll.onUpdate(Input.GetKey(inputDevice.ROLL));
             btFuncRun.onUpdate(Input.GetKey(inputDevice.RUN));
-            btFuncDefence.onUpdate(Input.GetKey(inputDevice.defence));
+            btFuncRightClick.onUpdate(Input.GetKey(inputDevice.RIGHTCLICK));
+            btFuncLeftClick.onUpdate(Input.GetKey(inputDevice.LEFTCLICK));
             btFuncLockOn.onUpdate(Input.GetKey(inputDevice.LOCKON));
             #endregion
 
             #region camera control
-            //camerVertical = (Input.GetKey(inputDevice.CAMERAUP) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERADOWN) ? 1f : 0);
-            //cameraHorizontal = (Input.GetKey(inputDevice.CAMERARIGHT) ? 1.0f : 0f) - (Input.GetKey(inputDevice.CAMERALEFT) ? 1f : 0);
 
             camerVertical = -Input.GetAxis("Mouse Y") * mouseSenstivityY;
             cameraHorizontal = Input.GetAxis("Mouse X") * mouseSenstivityX;
@@ -55,9 +54,9 @@ namespace anotherMethodForControl {
             #region signal control
             isRun = (btFuncRun.isPress && !btFuncRun.isDelay) || btFuncRun.isExtend;
             isRoll = btFuncRoll.isPress;
-            defence = btFuncDefence.isPress;
             jump = btFuncRun.onPress && btFuncRun.isExtend;
-            attack = btFuncAttack.onPress;
+            isLeftClick = btFuncLeftClick.onPress;
+            isRightClick = btFuncRightClick.onPress;
             isLockOn = btFuncLockOn.onPress;
             #endregion
 
